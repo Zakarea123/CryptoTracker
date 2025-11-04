@@ -24,6 +24,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.cryptotracker.data.db.AlertEntity
 import com.example.cryptotracker.data.db.CoinEntity
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.style.TextOverflow
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -123,7 +124,10 @@ fun FavoriteItem(
             val alertText = alert?.let { "Alert: $${"%.2f".format(it.targetPrice)}" } ?: "No alert"
             Text(
                 text = "${coin.symbol.uppercase()} — $${coin.price}  •  $alertText",
-                color = Color.LightGray
+                color = Color.LightGray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.widthIn(max = 200.dp)
             )
         }
 
@@ -159,7 +163,6 @@ fun FavoriteItem(
         )
     }
 }
-
 
 
 

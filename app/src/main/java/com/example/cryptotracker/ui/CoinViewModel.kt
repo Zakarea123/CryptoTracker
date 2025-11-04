@@ -1,6 +1,5 @@
 package com.example.cryptotracker.ui
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -208,7 +207,6 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
 
 
 
-    @SuppressLint("MissingPermission")
     private fun showNotification(context: Context, message: String) {
         val channelId = "price_alerts_channel"
         val manager = context.getSystemService(NotificationManager::class.java)
@@ -233,8 +231,7 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     }
 
 
-// Might not work on newer devices
-    @SuppressLint("MissingPermission")
+    // Might not work on newer devices
     private fun vibratePhone(context: Context) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
