@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         val repository = CoinRepository(this)
         val vm = CoinViewModel(repository)
 
@@ -42,25 +43,26 @@ class MainActivity : ComponentActivity() {
                 val isLoading by vm.isLoading.collectAsState()
                 val favorites by vm.favorites.collectAsState()
                 val favoriteList by vm.favoriteList.collectAsState()
-
+                val alerts by vm.alerts.collectAsState()
                 var showFavorites by remember { mutableStateOf(false) }
 
-                // ✅ load once when the app starts
+                // load once when the app starts
                 LaunchedEffect(Unit) {
                     vm.loadCoins()
                     vm.syncFavorites()
+                    vm.loadAlerts()
+                    vm.startAlertChecker(this@MainActivity) // start periodic check
                 }
 
 
                 if (showFavorites) {
                     FavoritesScreen(
                         favorites = favoriteList,
-                        onBack = {
-                            showFavorites = false
-                        },
-                        onRemove = { coin ->
-                            vm.removeFavorite(coin)
-                        }
+                        alerts = alerts,
+                        onBack = { showFavorites = false },
+                        onSaveAlert = { coin, target -> vm.saveOrUpdateAlert(coin, target) },
+                        onRemoveAlert = { coinId -> vm.removeAlert(coinId) },
+                        onRemove = { vm.removeFavorite(it) }
                     )
                 } else {
                     MainScreen(
@@ -79,6 +81,7 @@ class MainActivity : ComponentActivity() {
                         FloatingActionButton(
                             onClick = {
                                 vm.loadFavorites()
+                                vm.loadAlerts()
                                 showFavorites = true
                             },
                             containerColor = Color(0xFF2196F3),
