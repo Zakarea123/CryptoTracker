@@ -31,10 +31,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        val repository = CoinRepository(this)
-        val vm = CoinViewModel(repository)
-
-
 
         setContent {
             CryptoTrackerTheme {

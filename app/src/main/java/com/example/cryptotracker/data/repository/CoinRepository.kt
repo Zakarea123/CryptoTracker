@@ -30,11 +30,8 @@ class CoinRepository(context: Context) {
     // alerts
     suspend fun upsertAlert(alert: AlertEntity) = alertDao.upsert(alert)
 
-    suspend fun getAlertFor(coinId: String) = alertDao.getByCoinId(coinId)
     suspend fun getAllAlerts() = alertDao.getAll()
     suspend fun deleteAlertFor(coinId: String) = alertDao.deleteByCoinId(coinId)
-    suspend fun setAlertTriggered(id: Int, triggered: Boolean) = alertDao.updateTriggered(id, triggered)
-
     suspend fun deleteAlertByCoinId(coinId: String) {
         db.alertDao().deleteByCoinId(coinId)
     }
