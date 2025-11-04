@@ -213,14 +213,13 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
         val channelId = "price_alerts_channel"
         val manager = context.getSystemService(NotificationManager::class.java)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
                 "Price Alerts",
                 NotificationManager.IMPORTANCE_HIGH
             )
             manager.createNotificationChannel(channel)
-        }
+
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setContentTitle("Crypto Alert 🚨")
@@ -234,7 +233,7 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     }
 
 
-
+// Might not work on newer devices
     @SuppressLint("MissingPermission")
     private fun vibratePhone(context: Context) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

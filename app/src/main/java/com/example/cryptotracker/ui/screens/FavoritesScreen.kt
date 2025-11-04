@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,7 +81,11 @@ fun FavoritesScreen(
                             onRemove = onRemove
                         )
 
-                        Divider(color = Color.Gray.copy(alpha = 0.3f))
+                        HorizontalDivider(
+                            Modifier,
+                            DividerDefaults.Thickness,
+                            color = Color.Gray.copy(alpha = 0.3f)
+                        )
                     }
                 }
             }
