@@ -26,8 +26,8 @@ fun MainScreen(
     favorites: Set<String>,
     onRefresh: () -> Unit,
     onFavoriteClick: (Coin) -> Unit
-
-) {
+)
+{
     Scaffold(
         topBar = {
             TopAppBar(
@@ -38,8 +38,8 @@ fun MainScreen(
                 )
             )
         }
-    ) { padding ->
-        Box(
+    ) {
+        padding -> Box(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
@@ -77,26 +77,22 @@ fun MainScreen(
         }
     }
 
-
 @Composable
-fun CoinItem(
-    coin: Coin,
-    isFavorite: Boolean,
-    onFavoriteClick: (Coin) -> Unit
-) {
+fun CoinItem(coin: Coin, isFavorite: Boolean, onFavoriteClick: (Coin) -> Unit)
+{
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+        verticalAlignment = Alignment.CenterVertically)
+    {
         Image(
             painter = rememberAsyncImagePainter(coin.image),
             contentDescription = coin.name,
             modifier = Modifier.size(40.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column {
+        Column{
             Text(text = coin.name, color = Color.White, fontWeight = FontWeight.Bold)
             Text(text = "${coin.symbol.uppercase()} — $${coin.current_price}", color = Color.LightGray)
         }
@@ -111,7 +107,7 @@ fun CoinItem(
             modifier = Modifier.padding(end = 8.dp)
         )
 
-        // ⭐ Favorite toggle button
+        // Favorite toggle button
         IconButton(onClick = { onFavoriteClick(coin) }) {
             Icon(
                 imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,

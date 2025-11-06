@@ -19,20 +19,19 @@ class CoinRepository(context: Context) {
     private val alertDao = db.alertDao()
 
 
-    // Coin
+    // Fetch coins using retrofit
     suspend fun fetchCoins(): List<Coin> {
         return RetrofitInstance.api.getMarketData()
     }
+
+    // Favorites
     suspend fun getFavorites(): List<CoinEntity> = dao.getAll()
     suspend fun addFavorite(coin: CoinEntity) = dao.insert(coin)
     suspend fun removeFavorite(coin: CoinEntity) = dao.delete(coin)
 
     // alerts
     suspend fun upsertAlert(alert: AlertEntity) = alertDao.upsert(alert)
-
     suspend fun getAllAlerts() = alertDao.getAll()
     suspend fun deleteAlertFor(coinId: String) = alertDao.deleteByCoinId(coinId)
-    suspend fun deleteAlertByCoinId(coinId: String) {
-        db.alertDao().deleteByCoinId(coinId)
-    }
+
 }

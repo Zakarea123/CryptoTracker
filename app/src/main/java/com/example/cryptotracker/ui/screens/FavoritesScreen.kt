@@ -69,11 +69,12 @@ fun FavoritesScreen(
                     color = Color.White,
                     modifier = Modifier.align(Alignment.Center)
                 )
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                    items(favorites) { coin ->
-                        val alert = alerts[coin.id]   // get the alert for this coin (if any)
-
+            } else
+            {
+                LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp))
+                {
+                    items(favorites)
+                    { coin -> val alert = alerts[coin.id]   // get the alert for this coin (if any)
                         FavoriteItem(
                             coin = coin,
                             alert = alert,
@@ -81,7 +82,6 @@ fun FavoritesScreen(
                             onRemoveAlert = onRemoveAlert,
                             onRemove = onRemove
                         )
-
                         HorizontalDivider(
                             Modifier,
                             DividerDefaults.Thickness,
@@ -103,7 +103,6 @@ fun FavoriteItem(
     onRemove: (CoinEntity) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,7 +132,7 @@ fun FavoriteItem(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 👇 New bell icon for alerts
+        // Bell icon for alerts
         IconButton(onClick = { showDialog = true }) {
             Icon(
                 imageVector = if (alert == null) Icons.Outlined.Notifications else Icons.Filled.Notifications,
@@ -141,8 +140,7 @@ fun FavoriteItem(
                 tint = if (alert == null) Color.Gray else Color(0xFFFFC107)
             )
         }
-
-        // Existing delete icon
+        // Delete icon
         IconButton(onClick = { onRemove(coin) }) {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -151,8 +149,7 @@ fun FavoriteItem(
             )
         }
     }
-
-    // 👇 Show dialog when bell is pressed
+    // Show dialog when bell is pressed
     if (showDialog) {
         AlertInputDialog(
             coinName = coin.name,

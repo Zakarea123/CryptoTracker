@@ -27,11 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.example.cryptotracker.ui.screens.FavoritesScreen
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
-
-
-
         setContent {
             CryptoTrackerTheme {
                 val vm = remember { CoinViewModel(CoinRepository(this)) }
@@ -49,8 +47,6 @@ class MainActivity : ComponentActivity() {
                     vm.loadAlerts()
                     vm.startAlertChecker(this@MainActivity) // start periodic check
                 }
-
-
                 if (showFavorites) {
                     FavoritesScreen(
                         favorites = favoriteList,
@@ -68,7 +64,6 @@ class MainActivity : ComponentActivity() {
                         onRefresh = { vm.loadCoins() },
                         onFavoriteClick = { vm.toggleFavorite(it) }
                     )
-
                     // Floating Action Button to open favorites
                     Box(
                         modifier = Modifier.fillMaxSize(),
