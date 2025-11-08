@@ -33,7 +33,7 @@ fun FavoritesScreen(
     favorites: List<CoinEntity>,
     alerts: Map<String, AlertEntity>,
     onBack: () -> Unit,
-    onSaveAlert: (CoinEntity, Double) -> Unit,
+    onSaveAlert: (CoinEntity, Double, String) -> Unit,
     onRemoveAlert: (String) -> Unit,
     onRemove: (CoinEntity) -> Unit
 ) {
@@ -98,8 +98,8 @@ fun FavoritesScreen(
 fun FavoriteItem(
     coin: CoinEntity,
     alert: AlertEntity?,
-    onSaveAlert: (CoinEntity, Double) -> Unit, //for saving alerts
-    onRemoveAlert: (String) -> Unit,           // for deleting alerts
+    onSaveAlert: (CoinEntity, Double, String) -> Unit,
+    onRemoveAlert: (String) -> Unit,
     onRemove: (CoinEntity) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -154,7 +154,7 @@ fun FavoriteItem(
         AlertInputDialog(
             coinName = coin.name,
             existing = alert,
-            onConfirm = { target -> onSaveAlert(coin, target) },
+            onConfirm = { target, type -> onSaveAlert(coin, target, type) },
             onRemove = if (alert != null) ({ onRemoveAlert(coin.id) }) else null,
             onDismiss = { showDialog = false }
         )
@@ -167,26 +167,58 @@ fun FavoriteItem(
 fun AlertInputDialog(
     coinName: String,
     existing: AlertEntity?,
-    onConfirm: (Double) -> Unit,
+    onConfirm: (Double, String) -> Unit,
     onRemove: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     var input by remember { mutableStateOf(existing?.targetPrice?.toString() ?: "") }
+    var isBelow by remember { mutableStateOf(existing?.alertType == "BELOW") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (existing == null) "Set alert for $coinName" else "Edit alert for $coinName") },
+        title = {
+            Text(
+                if (existing == null)
+                    "Set alert for $coinName"
+                else
+                    "Edit alert for $coinName")
+        },
         text = {
-            OutlinedTextField(
-                value = input,
-                onValueChange = { input = it },
-                label = { Text("Target price (e.g. 45000.0)") },
-                singleLine = true
-            )
+            Column {
+                // Input field for price
+                OutlinedTextField(
+                    value = input,
+                    onValueChange = { input = it },
+                    label = { Text("Target price (e.g. 45000.0)") },
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = isBelow,
+                        onCheckedChange = { isBelow = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color(0xFFFFC107),
+                            uncheckedColor = Color.Black
+                        )
+                    )
+                    Text(
+                        text = "Trigger when price goes below this value",
+                        color = Color.Black
+                    )
+                }
+            }
         },
         confirmButton = {
             Button(onClick = {
-                input.toDoubleOrNull()?.let(onConfirm)
+                val value = input.toDoubleOrNull()
+                if (value != null) {
+                    val alertType = if (isBelow) "BELOW" else "ABOVE"
+                    onConfirm(value, alertType) // ✅ send both price + direction
+                }
                 onDismiss()
             }) { Text("Save") }
         },

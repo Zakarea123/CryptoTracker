@@ -120,16 +120,17 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     }
 
 
-    fun saveOrUpdateAlert(coin: CoinEntity, target: Double) {
+    fun saveOrUpdateAlert(coin: CoinEntity, target: Double, type: String) {
         viewModelScope.launch {
             repository.upsertAlert(
                 AlertEntity(
                     coinId = coin.id,
                     coinName = coin.name,
-                    targetPrice = target
+                    targetPrice = target,
+                    alertType = type
                 )
             )
-            loadAlerts() // refresh map for UI
+            loadAlerts()
         }
     }
 
@@ -146,35 +147,23 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     fun startAlertChecker(context: Context) {
         viewModelScope.launch {
             while (true) {
-                println("Checking alerts....")
                 try {
                     val alerts = repository.getAllAlerts()
-
-                    println("Found ${alerts.size} alerts in database")
-
-                    val coins = _coins.value   // use existing prices
-
-                    println("Currently tracking ${coins.size} coins")
-
+                    val coins = _coins.value   // use existing prices, because of api limitations
                     for (alert in alerts) {
                         val coin = coins.find { it.id == alert.coinId }
-
-                        println("Comparing ${coin?.name}: current=${coin?.current_price}, target=${alert.targetPrice}")
-
-                        if (coin != null && !alert.triggered) {
-                            if (coin.current_price >= alert.targetPrice) {
-
-                                println("Triggered ${coin.name} alert!")
-
-                                showNotification(context, "${coin.name} reached ${coin.current_price}")
+                        if (coin != null)
+                        {
+                            val shouldTrigger =
+                                (alert.alertType == "ABOVE" && coin.current_price >= alert.targetPrice) ||
+                                        (alert.alertType == "BELOW" && coin.current_price <= alert.targetPrice)
+                            if (shouldTrigger)
+                            {
+                                showNotification(context, "${coin.name} ${alert.alertType.lowercase()} $${"%.2f".format(alert.targetPrice)}")
                                 vibratePhone(context)
 
-                                // Delete the alert after triggering
                                 repository.deleteAlertFor(alert.coinId)
-
-                                // Refresh alerts map for UI update
                                 loadAlerts()
-                                println("Removed alert for ${coin.name} after triggering")
                             }
                         }
                     }
@@ -212,9 +201,9 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     }
 
 
-    // Uses new API on Android 8+ and legacy method on older devices for full compatibility
     private fun vibratePhone(context: Context) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        // Checks the OS version to pick the right API for full compatibility
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             vibrator.vibrate(VibrationEffect.createOneShot(500,VibrationEffect.DEFAULT_AMPLITUDE))

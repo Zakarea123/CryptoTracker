@@ -4,7 +4,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 // Retrofit API interface for communicating with the CoinGecko REST API
-// Defines endpoints and query parameters
 interface CoinGeckoApi {
     @GET("coins/markets")
     suspend fun getMarketData(

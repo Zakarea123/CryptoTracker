@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         favorites = favoriteList,
                         alerts = alerts,
                         onBack = { showFavorites = false },
-                        onSaveAlert = { coin, target -> vm.saveOrUpdateAlert(coin, target) },
+                        onSaveAlert = { coin, target, type -> vm.saveOrUpdateAlert(coin, target, type) },
                         onRemoveAlert = { coinId -> vm.removeAlert(coinId) },
                         onRemove = { vm.removeFavorite(it) }
                     )

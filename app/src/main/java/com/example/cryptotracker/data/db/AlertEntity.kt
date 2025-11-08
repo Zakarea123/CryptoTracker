@@ -11,5 +11,6 @@ data class AlertEntity(
     val coinId: String,
     val coinName: String,
     val targetPrice: Double,
-    val triggered: Boolean = false // mark if alert triggered
+    val triggered: Boolean = false ,
+    val alertType: String = "ABOVE"
 )
