@@ -18,6 +18,7 @@ import com.example.cryptotracker.data.model.Coin
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 
+// Styling was done with the help of OpenAI chatbot
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(

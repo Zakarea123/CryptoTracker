@@ -26,7 +26,7 @@ import com.example.cryptotracker.data.db.CoinEntity
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextOverflow
 
-
+// Styling was done with the help of OpenAI chatbot
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(

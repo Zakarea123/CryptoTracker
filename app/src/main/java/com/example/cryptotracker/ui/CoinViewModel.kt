@@ -197,7 +197,7 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
         }
     }
 
-
+    // Done with OpenAI help
     private fun showNotification(context: Context, message: String) {
         val channelId = "price_alerts_channel"
         val manager = context.getSystemService(NotificationManager::class.java)
