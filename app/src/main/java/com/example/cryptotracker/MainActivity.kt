@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
                 // load once when the app starts
                 LaunchedEffect(Unit) {
-                    vm.loadCoins()
+                    vm.startAutoRefresh()
                     vm.syncFavorites()
                     vm.loadAlerts()
                     vm.startAlertChecker(this@MainActivity) // start periodic check

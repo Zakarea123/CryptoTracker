@@ -44,9 +44,7 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
             try {
                 _isLoading.value = true
                 val result = repository.fetchCoins()
-                println(" API returned ${result.size} coins")
                 _coins.value = result
-                println(" ViewModel coins updated: ${_coins.value.size}")
             }
             catch (e: Exception)
             {
@@ -59,6 +57,20 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
         }
     }
 
+    fun startAutoRefresh() {
+        viewModelScope.launch {
+            while (true) {
+                try {
+                    loadCoins()
+                    loadFavorites()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                delay(30_000)
+                println("Refreshing........")
+            }
+        }
+    }
 
     // Adds and removes coins from favorites
     fun toggleFavorite(coin: Coin) = viewModelScope.launch {
@@ -69,11 +81,9 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
             repository.removeFavorite(entity)
             repository.deleteAlertFor(coin.id)
             current.remove(coin.id)
-            println("Removed ${coin.name} and its alert")
         } else {
             repository.addFavorite(entity)
             current.add(coin.id)
-            println("Added ${coin.name} to favorites")
         }
 
         _favorites.value = current
@@ -82,7 +92,20 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
 
     fun loadFavorites() {
         viewModelScope.launch {
-            _favoriteList.value = repository.getFavorites()
+            val favoFromDb = repository.getFavorites()
+            val liveCoins = _coins.value
+
+            // Update favorite prices based on latest data
+            val updatedFavo = favoFromDb.map { fav ->
+                val liveCoin = liveCoins.find {it.id == fav.id}
+                if (liveCoin != null)
+                {
+                    fav.copy(price = liveCoin.current_price)
+                }
+                else
+                    fav
+            }
+            _favoriteList.value = updatedFavo
         }
     }
 
@@ -96,7 +119,6 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
 
             _favoriteList.value = _favoriteList.value.filterNot { it.id == coin.id }
             _favorites.value = _favorites.value - coin.id
-            println("Removed ${coin.name} and its alert (if existed)")
         }
     }
 
@@ -113,9 +135,7 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
     // Alert functions
     fun loadAlerts() {
         viewModelScope.launch {
-            val all = repository.getAllAlerts()
             _alerts.value = repository.getAllAlerts().associateBy { it.coinId }
-            println("Loaded ${all.size} alerts from DB")
         }
     }
 
@@ -171,7 +191,8 @@ class CoinViewModel(private val repository: CoinRepository) : ViewModel() {
                     e.printStackTrace()
                 }
 
-                delay(30_000)
+                delay(10000)
+                println("Checking alerts")
             }
         }
     }
